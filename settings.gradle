@@ -1,0 +1,3 @@
+rootProject.name = 'CloudDbPipeline'
+include 'json-mysql-8-test'
+

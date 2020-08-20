@@ -1,0 +1,26 @@
+# Project exclude paths
+**.log
+**/target
+**/.classpath
+**/.project
+**/.factorypath
+
+# IDE
+**/.idea
+.idea/**
+**.iml
+.vscode/**
+
+# gradle
+.gradle/**
+gradle/**
+**/build/**
+
+# mqtt client java
+*.lck
+
+# benchmark result
+benchmark/**
+
+# file system
+.DS_Store

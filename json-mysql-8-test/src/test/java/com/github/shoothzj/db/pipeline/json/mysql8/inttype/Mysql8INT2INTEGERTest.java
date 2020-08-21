@@ -1,7 +1,7 @@
-package com.github.shoothzj.db.pipeline.json.mysql8;
+package com.github.shoothzj.db.pipeline.json.mysql8.inttype;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.LongNode;
+import com.fasterxml.jackson.databind.node.IntNode;
 import com.github.shoothzj.db.pipeline.json.mysql8.util.Mysql8Util;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Assert;
@@ -21,7 +21,7 @@ import java.util.Properties;
  */
 @Slf4j
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class Mysql8Long2BooleanNullableTest {
+public class Mysql8INT2INTEGERTest {
 
     @Before
     public void initDriver() throws Exception {
@@ -35,7 +35,7 @@ public class Mysql8Long2BooleanNullableTest {
         p.put("user", "hzj");
         p.put("password", "Mysql@123");
         try (Connection c = DriverManager.getConnection("jdbc:mysql://localhost:3306/ttbb", p)) {
-            PreparedStatement preparedStatement = c.prepareStatement("CREATE TABLE EXAMPLE_LONG_BOOLEAN_NULLABLE(field BOOLEAN)");
+            PreparedStatement preparedStatement = c.prepareStatement("CREATE TABLE EXAMPLE_BOOLEAN_BOOLEAN_NULLABLE(field INTEGER)");
             preparedStatement.execute();
         }
     }
@@ -43,8 +43,8 @@ public class Mysql8Long2BooleanNullableTest {
     @Test
     public void bInsertData() throws Exception {
         String[] keys = {"field"};
-        JsonNode[] values = {new LongNode(1)};
-        Mysql8Util.insertData("EXAMPLE_LONG_BOOLEAN_NULLABLE", keys, values);
+        JsonNode[] values = {new IntNode(4)};
+        Mysql8Util.insertData("EXAMPLE_BOOLEAN_BOOLEAN_NULLABLE", keys, values);
     }
 
     @Test
@@ -54,10 +54,12 @@ public class Mysql8Long2BooleanNullableTest {
         p.put("user", "hzj");
         p.put("password", "Mysql@123");
         try (Connection c = DriverManager.getConnection("jdbc:mysql://localhost:3306/ttbb", p)) {
-            PreparedStatement preparedStatement = c.prepareStatement("SELECT * FROM EXAMPLE_LONG_BOOLEAN_NULLABLE");
+            PreparedStatement preparedStatement = c.prepareStatement("SELECT * FROM EXAMPLE_BOOLEAN_BOOLEAN_NULLABLE");
             ResultSet resultSet = preparedStatement.executeQuery();
             Assert.assertTrue(resultSet.next());
-            log.info("field is [{}]", resultSet.getBoolean("field"));
+            boolean field = resultSet.getBoolean("field");
+            log.info("field is [{}]", field);
+            Assert.assertTrue(field);
             Assert.assertFalse(resultSet.next());
         }
     }
@@ -69,7 +71,7 @@ public class Mysql8Long2BooleanNullableTest {
         p.put("user", "hzj");
         p.put("password", "Mysql@123");
         try (Connection c = DriverManager.getConnection("jdbc:mysql://localhost:3306/ttbb", p)) {
-            PreparedStatement preparedStatement = c.prepareStatement("DROP TABLE EXAMPLE_LONG_BOOLEAN_NULLABLE");
+            PreparedStatement preparedStatement = c.prepareStatement("DROP TABLE EXAMPLE_BOOLEAN_BOOLEAN_NULLABLE");
             preparedStatement.execute();
         }
     }

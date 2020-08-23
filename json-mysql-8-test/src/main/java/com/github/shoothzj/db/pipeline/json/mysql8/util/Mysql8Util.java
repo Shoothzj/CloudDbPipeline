@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.node.FloatNode;
 import com.fasterxml.jackson.databind.node.IntNode;
 import com.fasterxml.jackson.databind.node.LongNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.fasterxml.jackson.databind.node.TextNode;
 import com.github.shoothzj.db.pipeline.json.mysql8.exception.NotImplementException;
 import com.github.shoothzj.db.pipeline.json.mysql8.exception.NotSupportException;
 import com.github.shoothzj.db.pipeline.json.mysql8.module.FieldDescribe;
@@ -70,9 +71,11 @@ public class Mysql8Util {
         String columnTypeName = fieldDescribe.getColumnTypeName();
         if (node instanceof BooleanNode) {
             {
+                if (columnTypeName.equals("DATE")) {
+                    throw new NotSupportException("Boolean Node can't convert to DATE");
+                }
                 BooleanNode booleanNode = (BooleanNode) node;
-                if (columnTypeName.equals("BIT") || columnTypeName.equals("TINYINT")
-                        || columnTypeName.equals("INT")) {
+                if (ColumnTypeUtil.isNumberType(columnTypeName)) {
                     statement.setBoolean(index, booleanNode.booleanValue());
                     return;
                 }
@@ -99,27 +102,65 @@ public class Mysql8Util {
         }
         if (node instanceof FloatNode) {
             if (ColumnTypeUtil.isNumberType(columnTypeName)) {
-                throw new NotSupportException("Double Node can't convert to BIT");
+                throw new NotSupportException("FloatNode Node can't convert to NUMBER");
             }
             FloatNode floatNode = (FloatNode) node;
         }
         if (node instanceof DoubleNode) {
             if (ColumnTypeUtil.isNumberType(columnTypeName)) {
-                throw new NotSupportException("Double Node can't convert to BIT");
+                throw new NotSupportException("Double Node can't convert to NUMBER");
             }
             DoubleNode doubleNode = (DoubleNode) node;
         }
+        if (node instanceof TextNode) {
+            TextNode textNode = (TextNode) node;
+            statement.setString(index, textNode.textValue());
+            return;
+        }
         if (node instanceof ArrayNode) {
             if (ColumnTypeUtil.isNumberType(columnTypeName)) {
-                throw new NotSupportException("Double Node can't convert to BIT");
+                throw new NotSupportException("Double Node can't convert to NUMBER");
             }
             ArrayNode arrayNode = (ArrayNode) node;
         }
         if (node instanceof ObjectNode) {
             if (ColumnTypeUtil.isNumberType(columnTypeName)) {
-                throw new NotSupportException("Double Node can't convert to BIT");
+                throw new NotSupportException("Double Node can't convert to NUMBER");
             }
             ObjectNode objectNode = (ObjectNode) node;
+        }
+        throw new IllegalArgumentException(String.format("jackson type %s Not implemented yet.", node.getClass()));
+    }
+
+    public static void setParamSimple(int index, JsonNode node, PreparedStatement statement) throws Exception {
+        if (node instanceof BooleanNode) {
+            BooleanNode booleanNode = (BooleanNode) node;
+            statement.setBoolean(index, booleanNode.booleanValue());
+            return;
+        }
+        if (node instanceof IntNode) {
+            IntNode intNode = (IntNode) node;
+            statement.setInt(index, intNode.intValue());
+        }
+        if (node instanceof LongNode) {
+            LongNode longNode = (LongNode) node;
+            statement.setLong(index, longNode.longValue());
+        }
+        if (node instanceof FloatNode) {
+            FloatNode floatNode = (FloatNode) node;
+            statement.setFloat(index, floatNode.floatValue());
+        }
+        if (node instanceof DoubleNode) {
+            DoubleNode doubleNode = (DoubleNode) node;
+            statement.setDouble(index, doubleNode.doubleValue());
+        }
+        if (node instanceof TextNode) {
+            TextNode textNode = (TextNode) node;
+            statement.setString(index, textNode.textValue());
+            return;
+        }
+        if (node instanceof ArrayNode || node instanceof ObjectNode) {
+            statement.setString(index, node.toString());
         }
         throw new IllegalArgumentException(String.format("jackson type %s Not implemented yet.", node.getClass()));
     }

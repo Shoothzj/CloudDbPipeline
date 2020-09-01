@@ -1,0 +1,24 @@
+# rewind task名.用于同表操作
+- taskName: task1
+  # 数据库信息
+  dbInfo:
+    # 数据库类型
+    dbType: "mongodb"
+    # Mongo数据库信息
+    mongoInfo:
+      # Mongo数据库地址
+      connectionStr: "mongodb://localhost:27017"
+      # Mongo数据库名
+      dbName: "ttbb"
+      # MongoCollection名
+      collectionName: "user"
+      username: "testUser"
+      password: "testPassword"
+  transform:
+    map:
+      - fieldName: "name"
+        transformType: "function"
+        value: "UUID"
+      - fieldName: "locationInfo.country"
+        transformType: "constant"
+        value: "France"

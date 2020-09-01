@@ -1,0 +1,23 @@
+# rewind task名.用于同表操作
+- taskName: task1
+  # 数据库信息
+  dbInfo:
+    # 数据库类型
+    dbType: "mysql"
+    # Mysql数据库信息
+    mysqlInfo:
+      # Mysql数据库地址
+      jdbcUrl: "jdbc:mysql://localhost:3306/ttbb?user=hzj&password=Mysql@123"
+      # Mysql数据表名
+      tableName: "user"
+      username: "hzj"
+      password: "Mysql@123"
+      primaryKey: "name"
+  transform:
+    map:
+      - fieldName: "b"
+        transformType: "function"
+        value: "UUID"
+      - fieldName: "a"
+        transformType: "constant"
+        value: "France"

@@ -22,11 +22,24 @@ ext {
     // Json解析
     jacksonVersion = '2.11.2'
 
+    // hikari 连接池
+    hikariVersion = '3.4.5'
+
     // SpringBoot
     springBootVersion = '2.3.3.RELEASE'
 }
 
 dependencies {
+    compile group: 'com.github.shoothzj', name: 'java-tool', version: '3.0.22.RELEASE'
+    // https://mvnrepository.com/artifact/com.fasterxml.jackson.dataformat/jackson-dataformat-yaml
+    compile group: 'com.fasterxml.jackson.dataformat', name: 'jackson-dataformat-yaml', version: this.jacksonVersion
+
+    compile group: 'mysql', name: 'mysql-connector-java', version: '8.0.21'
+    compile group: 'com.zaxxer', name: 'HikariCP', version: this.hikariVersion
+
+    // https://mvnrepository.com/artifact/org.mongodb/mongodb-driver-sync
+    compile group: 'org.mongodb', name: 'mongodb-driver-sync', version: '4.1.0'
+
     implementation group: 'org.apache.logging.log4j', name: 'log4j-core', version: this.log4jVersion
 
     implementation group: 'org.apache.logging.log4j', name: 'log4j-slf4j-impl', version: this.log4jVersion

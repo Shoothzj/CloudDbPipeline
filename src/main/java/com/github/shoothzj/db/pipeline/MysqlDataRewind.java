@@ -1,66 +1,46 @@
 package com.github.shoothzj.db.pipeline;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
-import com.github.shoothzj.db.pipeline.module.DbInfoDto;
+import com.github.shoothzj.db.pipeline.api.AbstractDataRewind;
 import com.github.shoothzj.db.pipeline.module.MysqlInfoDto;
-import com.github.shoothzj.db.pipeline.module.RewindTaskDto;
 import com.github.shoothzj.db.pipeline.module.TransformDto;
 import com.github.shoothzj.db.pipeline.util.MysqlUtil;
-import com.github.shoothzj.javatool.util.LogUtil;
-import com.google.common.io.Resources;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import lombok.extern.slf4j.Slf4j;
 
-import java.io.IOException;
-import java.net.URL;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.util.List;
 
 /**
  * @author hezhangjian
  */
 @Slf4j
-public class MysqlDataRewind {
+public class MysqlDataRewind extends AbstractDataRewind {
 
-    public static void main(String[] args) throws IOException {
-        LogUtil.configureLog();
-        final URL resourceUrl = Resources.getResource("rewind/mysql_sample.yaml");
-        final ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
-        final List<RewindTaskDto> rewindTaskDtos = mapper.readValue(resourceUrl, new TypeReference<List<RewindTaskDto>>() {
-        });
-        log.info("rewind config dto is [{}]", rewindTaskDtos);
-        //开始处理rewind task
-        for (RewindTaskDto rewindTaskDto : rewindTaskDtos) {
-            processRewindTask(rewindTaskDto);
-        }
-    }
+    private final MysqlInfoDto mysqlInfoDto;
 
-    public static void processRewindTask(RewindTaskDto rewindTaskDto) {
-        log.info("rewind task dto is [{}]", rewindTaskDto);
-        final DbInfoDto dbInfo = rewindTaskDto.getDbInfo();
-        if (dbInfo.getDbType().equals("mysql")) {
-            processRewindMysql(rewindTaskDto.getDbInfo().getMysqlInfo(), rewindTaskDto.getTransform());
-        } else {
-            throw new IllegalArgumentException("Not supported db type yet");
-        }
-    }
+    private final TransformDto transformDto;
 
-    public static void processRewindMysql(MysqlInfoDto mysqlInfoDto, TransformDto transformDto) {
+    private final HikariDataSource dataSource;
+
+    public MysqlDataRewind(MysqlInfoDto mysqlInfoDto, TransformDto transformDto) {
+        this.mysqlInfoDto = mysqlInfoDto;
+        this.transformDto = transformDto;
         HikariConfig config = new HikariConfig();
         config.setJdbcUrl(mysqlInfoDto.getJdbcUrl());
         config.addDataSourceProperty("cachePrepStmts", "true");
         config.addDataSourceProperty("prepStmtCacheSize", "250");
         config.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
-        HikariDataSource dataSource = new HikariDataSource(config);
+        dataSource = new HikariDataSource(config);
+    }
 
+    @Override
+    protected long processRewind() {
         final String tableName = mysqlInfoDto.getTableName();
         final String primaryKey = mysqlInfoDto.getPrimaryKey();
         long skip = -1;
+        long count = 0;
         while (true) {
             try (Connection connection = dataSource.getConnection()) {
                 if (skip == -1) {
@@ -76,6 +56,7 @@ public class MysqlDataRewind {
                         break;
                     }
                     skip = size;
+                    count += size;
                     log.info("size is [{}]", size);
                 } else {
                     // two and there
@@ -90,15 +71,17 @@ public class MysqlDataRewind {
                         break;
                     }
                     skip += size;
+                    count += size;
                     log.info("size is [{}]", size);
                 }
             } catch (Exception e) {
                 log.error("exec exception ", e);
             }
         }
+        return count;
     }
 
-    public static String firstQuerySql(String tableName, String primaryKey, long pageSize) {
+    public String firstQuerySql(String tableName, String primaryKey, long pageSize) {
         // 子查询分页 SELECT * FROM $TABLE_NAME
         // WHERE $PRIMARY_KEY >= (SELECT $PRIMARY_KEY FROM $TABLE_NAME ORDER BY $PRIMARY_KEY asc LIMIT ${(page-1)*pagesize} )
         // ORDER BY $PRIMARY_KEY asc LIMIT $PAGE_SIZE
@@ -109,7 +92,7 @@ public class MysqlDataRewind {
         return phase1Sql + phase2Sql + phase3Sql + phase4Sql + ";";
     }
 
-    public static String subQuerySql(String tableName, String primaryKey, long skip, long pageSize) {
+    public String subQuerySql(String tableName, String primaryKey, long skip, long pageSize) {
         // 子查询分页 SELECT * FROM $TABLE_NAME
         // WHERE $PRIMARY_KEY >= (SELECT $PRIMARY_KEY FROM $TABLE_NAME ORDER BY $PRIMARY_KEY asc LIMIT ${(page-1)*pagesize} )
         // ORDER BY $PRIMARY_KEY asc LIMIT $PAGE_SIZE
@@ -120,4 +103,9 @@ public class MysqlDataRewind {
         return phase1Sql + phase2Sql + phase3Sql + phase4Sql + ";";
     }
 
+
+    @Override
+    protected void close() {
+        dataSource.close();
+    }
 }

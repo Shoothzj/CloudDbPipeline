@@ -1,16 +1,10 @@
 package com.github.shoothzj.db.pipeline;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
-import com.github.shoothzj.db.pipeline.module.DbInfoDto;
+import com.github.shoothzj.db.pipeline.api.AbstractDataRewind;
 import com.github.shoothzj.db.pipeline.module.MongoInfoDto;
-import com.github.shoothzj.db.pipeline.module.RewindTaskDto;
 import com.github.shoothzj.db.pipeline.module.TransformDto;
 import com.github.shoothzj.db.pipeline.util.MongoUtil;
-import com.github.shoothzj.javatool.util.LogUtil;
 import com.google.common.collect.Lists;
-import com.google.common.io.Resources;
 import com.mongodb.BasicDBObject;
 import com.mongodb.ConnectionString;
 import com.mongodb.MongoClientSettings;
@@ -22,9 +16,7 @@ import com.mongodb.client.MongoDatabase;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.Document;
 
-import java.net.URL;
 import java.util.ArrayList;
-import java.util.List;
 
 import static com.mongodb.client.model.Filters.gt;
 
@@ -32,38 +24,26 @@ import static com.mongodb.client.model.Filters.gt;
  * @author hezhangjian
  */
 @Slf4j
-public class MongoDataRewind {
+public class MongoDataRewind extends AbstractDataRewind {
 
-    public static void main(String[] args) throws Exception {
-        LogUtil.configureLog();
-        final URL resourceUrl = Resources.getResource("rewind_sample.yaml");
-        final ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
-        final List<RewindTaskDto> rewindTaskDtos = mapper.readValue(resourceUrl, new TypeReference<List<RewindTaskDto>>() {
-        });
-        log.info("rewind config dto is [{}]", rewindTaskDtos);
-        //开始处理rewind task
-        for (RewindTaskDto rewindTaskDto : rewindTaskDtos) {
-            processRewindTask(rewindTaskDto);
-        }
-    }
+    private final MongoInfoDto mongoInfoDto;
 
-    private static void processRewindTask(RewindTaskDto rewindTaskDto) {
-        log.info("rewind task dto is [{}]", rewindTaskDto);
-        final DbInfoDto dbInfo = rewindTaskDto.getDbInfo();
-        if (dbInfo.getDbType().equals("mongodb")) {
-            processRewindMongo(rewindTaskDto.getDbInfo().getMongoInfo(), rewindTaskDto.getTransform());
-        } else {
-            throw new IllegalArgumentException("Not supported db type yet");
-        }
-    }
+    private final TransformDto transformDto;
 
-    private static void processRewindMongo(MongoInfoDto mongoInfoDto, TransformDto transformDto) {
+    private final MongoClient mongoClient;
+
+    public MongoDataRewind(MongoInfoDto mongoInfoDto, TransformDto transformDto) {
+        this.mongoInfoDto = mongoInfoDto;
+        this.transformDto = transformDto;
         final ConnectionString connectionString = new ConnectionString(mongoInfoDto.getConnectionStr());
         final MongoClientSettings.Builder builder = MongoClientSettings.builder().applyConnectionString(connectionString);
         builder.applyToConnectionPoolSettings(connectionPoolBuilder -> connectionPoolBuilder.maxSize(200));
         final MongoClientSettings mongoClientSettings = builder.build();
+        mongoClient = MongoClients.create(mongoClientSettings);
+    }
 
-        final MongoClient mongoClient = MongoClients.create(mongoClientSettings);
+    @Override
+    protected long processRewind() {
         final MongoDatabase database = mongoClient.getDatabase(mongoInfoDto.getDbName());
         final MongoCollection<Document> collection = database.getCollection(mongoInfoDto.getCollectionName());
 
@@ -93,6 +73,11 @@ public class MongoDataRewind {
             log.info("cursor is [{}]", cursor);
         }
         log.info("read count is [{}], cost is [{}]", count, System.currentTimeMillis() - startTime);
+        return count;
     }
 
+    @Override
+    protected void close() {
+        mongoClient.close();
+    }
 }

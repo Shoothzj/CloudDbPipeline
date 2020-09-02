@@ -1,5 +1,6 @@
 package com.github.shoothzj.db.pipeline;
 
+import com.github.shoothzj.db.pipeline.util.MysqlConcatUtil;
 import com.github.shoothzj.javatool.util.LogUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
@@ -12,13 +13,13 @@ public class MysqlDataRewindTest {
 
     @Test
     public void firstQueryTest() {
-        final String firstQuerySql = MysqlDataRewind.firstQuerySql("user", "name", 10);
+        final String firstQuerySql = MysqlConcatUtil.firstQuerySql("user", "name", 10);
         System.out.println(firstQuerySql);
     }
 
     @Test
     public void queryTest() {
-        final String subQuerySql = MysqlDataRewind.subQuerySql("user", "name", 10, 10);
+        final String subQuerySql = MysqlConcatUtil.subQuerySql("user", "name", 10, 10);
         System.out.println(subQuerySql);
     }
 

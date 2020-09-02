@@ -5,7 +5,7 @@
     # 数据库信息
     dbInfo:
       # 数据库类型
-      dbType: mongodb
+      dbType: Mongo
       # Mongo数据库信息
       mongoInfo:
         # Mongo数据库地址

@@ -3,7 +3,7 @@ package com.github.shoothzj.db.pipeline;
 import com.github.shoothzj.db.pipeline.api.AbstractDataRewind;
 import com.github.shoothzj.db.pipeline.module.MongoInfoDto;
 import com.github.shoothzj.db.pipeline.module.TransformDto;
-import com.github.shoothzj.db.pipeline.util.MongoUtil;
+import com.github.shoothzj.db.pipeline.util.MongoCalculateUtil;
 import com.google.common.collect.Lists;
 import com.mongodb.BasicDBObject;
 import com.mongodb.ConnectionString;
@@ -13,6 +13,7 @@ import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.model.Filters;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.Document;
 
@@ -24,13 +25,17 @@ import static com.mongodb.client.model.Filters.gt;
  * @author hezhangjian
  */
 @Slf4j
-public class MongoDataRewind extends AbstractDataRewind {
+public class MongoDataRewind extends AbstractDataRewind<Document> {
 
     private final MongoInfoDto mongoInfoDto;
 
     private final TransformDto transformDto;
 
     private final MongoClient mongoClient;
+
+    private final MongoDatabase database;
+
+    private final MongoCollection<Document> collection;
 
     public MongoDataRewind(MongoInfoDto mongoInfoDto, TransformDto transformDto) {
         this.mongoInfoDto = mongoInfoDto;
@@ -40,18 +45,16 @@ public class MongoDataRewind extends AbstractDataRewind {
         builder.applyToConnectionPoolSettings(connectionPoolBuilder -> connectionPoolBuilder.maxSize(200));
         final MongoClientSettings mongoClientSettings = builder.build();
         mongoClient = MongoClients.create(mongoClientSettings);
+        database = mongoClient.getDatabase(mongoInfoDto.getDbName());
+        collection = database.getCollection(mongoInfoDto.getCollectionName());
     }
 
     @Override
     protected long processRewind() {
-        final MongoDatabase database = mongoClient.getDatabase(mongoInfoDto.getDbName());
-        final MongoCollection<Document> collection = database.getCollection(mongoInfoDto.getCollectionName());
-
         boolean first = true;
         Object cursor = null;
         long count = 0;
 
-        final long startTime = System.currentTimeMillis();
         FindIterable<Document> documents;
         while (true) {
             if (first) {
@@ -66,14 +69,19 @@ public class MongoDataRewind extends AbstractDataRewind {
             }
             count += arrayList.size();
             for (Document document : arrayList) {
-                MongoUtil.rewindDocument(collection, document, transformDto);
+                processSingleItem(document);
             }
             final Document document = arrayList.get(arrayList.size() - 1);
             cursor = document.get("_id");
             log.info("cursor is [{}]", cursor);
         }
-        log.info("read count is [{}], cost is [{}]", count, System.currentTimeMillis() - startTime);
         return count;
+    }
+
+    @Override
+    protected void processSingleItem(Document document) {
+        final Document mapDocument = MongoCalculateUtil.mapDocument(document, transformDto.getMap());
+        collection.replaceOne(Filters.eq("_id", mapDocument.get("_id")), mapDocument);
     }
 
     @Override

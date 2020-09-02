@@ -10,8 +10,10 @@ public class MapDto {
 
     private String fieldName;
 
-    private String transformType;
+    private TransformType transformType;
 
-    private String value;
+    private FunctionInfo functionInfo;
+
+    private ConstantInfo constantInfo;
 
 }

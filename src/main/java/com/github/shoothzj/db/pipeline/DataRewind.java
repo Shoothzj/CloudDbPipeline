@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.github.shoothzj.db.pipeline.module.DbInfoDto;
+import com.github.shoothzj.db.pipeline.module.DbType;
 import com.github.shoothzj.db.pipeline.module.RewindTaskDto;
 import com.google.common.io.Resources;
 import lombok.extern.slf4j.Slf4j;
@@ -46,12 +47,12 @@ public class DataRewind {
         long startTime = System.currentTimeMillis();
         log.info("rewind task start, dto is [{}] start time is [{}]", rewindTaskDto, startTime);
         final DbInfoDto dbInfo = rewindTaskDto.getDbInfo();
-        final int count;
-        if (dbInfo.getDbType().equals("mongodb")) {
+        final long count;
+        if (dbInfo.getDbType().equals(DbType.Mongo)) {
             MongoDataRewind mongoDataRewind = new MongoDataRewind(rewindTaskDto.getDbInfo().getMongoInfo(), rewindTaskDto.getTransform());
             count = mongoDataRewind.processRewind();
             mongoDataRewind.close();
-        } else if (dbInfo.getDbType().equals("mysql")) {
+        } else if (dbInfo.getDbType().equals(DbType.Mysql)) {
             MysqlDataRewind mysqlDataRewind = new MysqlDataRewind(rewindTaskDto.getDbInfo().getMysqlInfo(), rewindTaskDto.getTransform());
             count = mysqlDataRewind.processRewind();
             mysqlDataRewind.close();

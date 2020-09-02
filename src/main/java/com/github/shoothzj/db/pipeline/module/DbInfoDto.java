@@ -8,7 +8,7 @@ import lombok.Data;
 @Data
 public class DbInfoDto {
 
-    private String dbType;
+    private DbType dbType;
 
     private MongoInfoDto mongoInfo;
 

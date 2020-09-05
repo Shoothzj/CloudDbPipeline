@@ -1,0 +1,19 @@
+plugins {
+    id 'java'
+}
+
+group 'com.github.shoothzj'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile project(":cloud-db-pipeline-api")
+    compile project(":cloud-db-pipeline-core")
+
+    compile group: 'org.mongodb', name: 'mongodb-driver-sync', version: '4.1.0'
+
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+}

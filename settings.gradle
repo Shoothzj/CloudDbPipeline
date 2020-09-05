@@ -1,3 +1,9 @@
 rootProject.name = 'CloudDbPipeline'
 include 'json-mysql-8-test'
+include 'cloud-db-pipeline-api'
+include 'cloud-db-pipeline-core'
+include 'test-integrate'
+include 'plugin-mongo'
+include 'plugin-mysql8'
+include 'plugin-elasticsearch'
 

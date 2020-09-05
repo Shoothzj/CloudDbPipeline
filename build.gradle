@@ -30,29 +30,43 @@ ext {
 }
 
 dependencies {
-    compile group: 'com.github.shoothzj', name: 'java-tool', version: '3.0.22.RELEASE'
-    // https://mvnrepository.com/artifact/com.fasterxml.jackson.dataformat/jackson-dataformat-yaml
-    compile group: 'com.fasterxml.jackson.dataformat', name: 'jackson-dataformat-yaml', version: this.jacksonVersion
+    compile project(":cloud-db-pipeline-api")
+
+    compile group: 'com.github.shoothzj', name: 'java-tool', version: '3.0.24.RELEASE'
 
     compile group: 'mysql', name: 'mysql-connector-java', version: '8.0.21'
-    compile group: 'com.zaxxer', name: 'HikariCP', version: this.hikariVersion
+    compile group: 'com.zaxxer', name: 'HikariCP', version: this.rootProject.hikariVersion
 
     // https://mvnrepository.com/artifact/org.mongodb/mongodb-driver-sync
     compile group: 'org.mongodb', name: 'mongodb-driver-sync', version: '4.1.0'
 
-    implementation group: 'org.apache.logging.log4j', name: 'log4j-core', version: this.log4jVersion
+    implementation group: 'org.springframework.boot', name: 'spring-boot-starter', version: this.rootProject.springBootVersion
+}
 
-    implementation group: 'org.apache.logging.log4j', name: 'log4j-slf4j-impl', version: this.log4jVersion
+subprojects {
+    apply plugin: 'java'
 
-    implementation group: 'org.springframework.boot', name: 'spring-boot-starter', version: this.springBootVersion
+    configurations {
+        all {
+            exclude group: 'org.springframework.boot', module: 'spring-boot-starter-logging'
+        }
+    }
 
-    annotationProcessor 'org.projectlombok:lombok:1.18.12'
+    dependencies {
+        compile group: 'com.github.shoothzj', name: 'java-tool', version: '3.0.24.RELEASE'
 
-    compileOnly 'org.projectlombok:lombok:1.18.12'
+        compile group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.13.3'
 
-    testAnnotationProcessor 'org.projectlombok:lombok:1.18.12'
+        compile group: 'org.apache.logging.log4j', name: 'log4j-slf4j-impl', version: '2.13.3'
 
-    testCompileOnly 'org.projectlombok:lombok:1.18.12'
+        annotationProcessor 'org.projectlombok:lombok:1.18.12'
 
-    testCompile group: 'junit', name: 'junit', version: '4.12'
+        compileOnly 'org.projectlombok:lombok:1.18.12'
+
+        testAnnotationProcessor 'org.projectlombok:lombok:1.18.12'
+
+        testCompileOnly 'org.projectlombok:lombok:1.18.12'
+
+        testCompile group: 'junit', name: 'junit', version: '4.12'
+    }
 }

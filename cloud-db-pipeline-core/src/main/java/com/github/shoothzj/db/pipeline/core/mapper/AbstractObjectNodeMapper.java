@@ -7,6 +7,6 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
  */
 public abstract class AbstractObjectNodeMapper<T> {
 
-    protected abstract ObjectNode map2ObjectNode(T t);
+    public abstract ObjectNode map2ObjectNode(T t);
 
 }

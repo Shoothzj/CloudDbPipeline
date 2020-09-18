@@ -16,4 +16,6 @@ public class MapDto {
 
     private ConstantInfo constantInfo;
 
+    private String reName;
+
 }

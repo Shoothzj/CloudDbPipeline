@@ -15,6 +15,11 @@ public enum FunctionName {
     /**
      * REVERSE
      */
-    Reverse
+    Reverse,
+
+    /**
+     * 转换为Java的LocalDateTime
+     */
+    UnixTimestampToDateTime
 
 }

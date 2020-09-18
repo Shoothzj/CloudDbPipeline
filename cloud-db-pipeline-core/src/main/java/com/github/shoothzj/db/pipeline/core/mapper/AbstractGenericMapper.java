@@ -7,6 +7,6 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
  */
 public abstract class AbstractGenericMapper<T> {
 
-    protected abstract T map2Generic(ObjectNode objectNode);
+    public abstract T map2Generic(ObjectNode objectNode);
 
 }

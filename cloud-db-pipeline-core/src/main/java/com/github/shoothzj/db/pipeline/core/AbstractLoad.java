@@ -16,13 +16,9 @@ public abstract class AbstractLoad<D> implements ILoad {
     public abstract void init(D d);
 
     @Override
-    public boolean load(ObjectNode objectNode) {
-        return false;
-    }
+    public abstract boolean load(ObjectNode objectNode);
 
     @Override
-    public boolean load(List<ObjectNode> objectNodeList) {
-        return false;
-    }
+    public abstract boolean load(List<ObjectNode> objectNodeList);
 
 }

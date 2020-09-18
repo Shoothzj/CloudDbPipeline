@@ -15,9 +15,10 @@ import java.util.stream.Collectors;
  * @author hezhangjian
  * S: 源数据库连接信息
  * D: 目标数据库连接信息
+ * PT: 主键数据类型
  */
 @Slf4j
-public abstract class AbstractEtl<S, D, PT> extends AbstractTransform implements IWork<PT>, IExtract<PT>, ILoad {
+public class Etl<S, D, PT> extends AbstractTransform implements IWork<PT>, IExtract<PT>, ILoad {
 
     private AbstractExtract<S, PT> extract;
 

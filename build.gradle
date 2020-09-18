@@ -32,7 +32,7 @@ ext {
 dependencies {
     compile project(":cloud-db-pipeline-api")
 
-    compile group: 'com.github.shoothzj', name: 'java-tool', version: '3.0.24.RELEASE'
+    compile group: 'com.github.shoothzj', name: 'java-tool', version: '3.0.26.RELEASE'
 
     compile group: 'mysql', name: 'mysql-connector-java', version: '8.0.21'
     compile group: 'com.zaxxer', name: 'HikariCP', version: this.rootProject.hikariVersion
@@ -53,7 +53,7 @@ subprojects {
     }
 
     dependencies {
-        compile group: 'com.github.shoothzj', name: 'java-tool', version: '3.0.24.RELEASE'
+        compile group: 'com.github.shoothzj', name: 'java-tool', version: '3.0.26.RELEASE'
 
         compile group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.13.3'
 

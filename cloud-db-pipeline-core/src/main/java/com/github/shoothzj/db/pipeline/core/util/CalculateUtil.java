@@ -4,9 +4,15 @@ import com.github.shoothzj.db.pipeline.api.module.transform.FunctionInfo;
 import com.github.shoothzj.db.pipeline.api.module.transform.FunctionName;
 import com.github.shoothzj.db.pipeline.api.module.transform.MapDto;
 import com.github.shoothzj.db.pipeline.api.module.transform.TransformType;
+import com.github.shoothzj.db.pipeline.core.exception.NotSupportException;
+import com.github.shoothzj.db.pipeline.core.module.StageEnum;
 import com.github.shoothzj.javatool.util.StringUtil;
 import lombok.extern.slf4j.Slf4j;
 
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.util.TimeZone;
 import java.util.UUID;
 
 /**
@@ -31,8 +37,19 @@ public class CalculateUtil {
         throw new IllegalStateException("not implemented yet.");
     }
 
+    public static Object processMap(int source, MapDto mapDto) {
+        final TransformType transformType = mapDto.getTransformType();
+        if (transformType == null) {
+            return source;
+        }
+        throw new NotSupportException(StageEnum.SOURCE_MAPPER, String.valueOf(source));
+    }
+
     public static Object processMap(String source, MapDto mapDto) {
         final TransformType transformType = mapDto.getTransformType();
+        if (transformType == null) {
+            return source;
+        }
         if (transformType.equals(TransformType.Function)) {
             final FunctionInfo functionInfo = mapDto.getFunctionInfo();
             if (functionInfo.getFunctionName().equals(FunctionName.UUID)) {
@@ -40,9 +57,11 @@ public class CalculateUtil {
             }
             if (functionInfo.getFunctionName().equals(FunctionName.Reverse)) {
                 return StringUtil.reverse(source);
-            } else {
-                throw new IllegalArgumentException("not implement yet.");
             }
+            if (functionInfo.getFunctionName().equals(FunctionName.UnixTimestampToDateTime)) {
+                return LocalDateTime.ofInstant(Instant.ofEpochMilli(Long.parseLong(source)), ZoneOffset.UTC);
+            }
+            throw new NotSupportException(StageEnum.FUNCTION, functionInfo.getFunctionName().name());
         } else if (transformType.equals(TransformType.Constant)) {
             return mapDto.getConstantInfo().getValue();
         } else {

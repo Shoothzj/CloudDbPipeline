@@ -1,0 +1,40 @@
+# rewind task名.用于同表操作
+- taskName: task1
+  # 数据库信息
+  extract:
+    dbInfo:
+      # 数据库类型
+      dbType: "Mysql"
+      # Mysql数据库信息
+      mysqlInfo:
+        # Mysql数据库地址
+        jdbcUrl: "jdbc:mysql://localhost:3306/ttbb?user=hzj&password=Mysql@123"
+        # Mysql数据表名
+        tableName: "old_table_etl_scene_1"
+        username: "hzj"
+        password: "Mysql@123"
+        primaryKey: "id"
+  transform:
+    map:
+      - fieldName: "id"
+        reName: "_id"
+      - fieldName: "oldInt"
+        reName: "newInt"
+      - fieldName: "oldLong"
+        reName: "newLong"
+      - fieldName: "oldString"
+        reName: "newString"
+  load:
+    dbInfo:
+      # 数据库类型
+      dbType: "Mongo"
+      # Mongo数据库信息
+      mongoInfo:
+        # Mongo数据库地址
+        connectionStr: "mongodb://localhost:27017"
+        # Mongo数据库名
+        dbName: "ttbb"
+        # MongoCollection名
+        collectionName: "new_table_etl_scene_1"
+        username: "testUser"
+        password: "testPassword"

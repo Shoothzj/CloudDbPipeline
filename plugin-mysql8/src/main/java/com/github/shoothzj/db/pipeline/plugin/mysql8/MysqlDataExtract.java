@@ -47,7 +47,7 @@ public class MysqlDataExtract<PT> extends AbstractExtract<MysqlInfoDto, PT> {
         dataSource = new HikariDataSource(config);
         tableName = mysqlInfoDto.getTableName();
         primaryKey = mysqlInfoDto.getPrimaryKey();
-        objectNodeMapper = new MysqlObjectNodeMapper(transformDto);
+        objectNodeMapper = new MysqlObjectNodeMapper(this.transformDto);
     }
 
     @Override

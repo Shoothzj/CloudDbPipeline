@@ -1,17 +1,16 @@
 package com.github.shoothzj.db.pipeline.plugin.mongo;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.IntNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.fasterxml.jackson.databind.node.TextNode;
+import com.github.shoothzj.db.pipeline.api.exchange.ExchangeTraverseCallback;
+import com.github.shoothzj.db.pipeline.api.exchange.InstantExchange;
 import com.github.shoothzj.db.pipeline.core.exception.NotSupportException;
+import com.github.shoothzj.db.pipeline.api.exchange.AbstractExchange;
+import com.github.shoothzj.db.pipeline.api.exchange.IntExchange;
+import com.github.shoothzj.db.pipeline.api.exchange.MapExchange;
+import com.github.shoothzj.db.pipeline.api.exchange.StringExchange;
 import com.github.shoothzj.db.pipeline.core.mapper.AbstractGenericMapper;
 import com.github.shoothzj.db.pipeline.core.module.StageEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.Document;
-
-import java.util.Iterator;
-import java.util.Map;
 
 /**
  * @author hezhangjian
@@ -21,26 +20,31 @@ public class MongoDocumentMapper extends AbstractGenericMapper<Document> {
 
 
     @Override
-    public Document map2Generic(ObjectNode objectNode) {
+    public Document map2Generic(MapExchange mapExchange) {
         final Document document = new Document();
-        final Iterator<Map.Entry<String, JsonNode>> entryIterator = objectNode.fields();
-        while (entryIterator.hasNext()) {
-            final Map.Entry<String, JsonNode> jsonNodeEntry = entryIterator.next();
-            put(document, jsonNodeEntry.getKey(), jsonNodeEntry.getValue());
-        }
+        mapExchange.traverse((name, abstractExchange) -> put(document, name, abstractExchange));
         return document;
     }
 
-    private void put(Document document, String name, JsonNode value) {
+    private void put(Document document, String name, AbstractExchange value) {
+        if (name.contains(".")) {
+            throw new NotSupportException(StageEnum.LOAD, "mongo load does not support dot yet.");
+        }
         {
-            if (value instanceof IntNode) {
-                document.put(name, value.intValue());
+            if (value instanceof IntExchange) {
+                document.put(name, ((IntExchange) value).intValue());
                 return;
             }
         }
         {
-            if (value instanceof TextNode) {
-                document.put(name, value.textValue());
+            if (value instanceof StringExchange) {
+                document.put(name, ((StringExchange) value).stringValue());
+                return;
+            }
+        }
+        {
+            if (value instanceof InstantExchange) {
+                document.put(name, ((InstantExchange) value).instantValue());
                 return;
             }
         }

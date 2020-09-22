@@ -1,7 +1,6 @@
 package com.github.shoothzj.db.pipeline.plugin.mongo;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.github.shoothzj.db.pipeline.api.exchange.MapExchange;
 import com.github.shoothzj.db.pipeline.api.module.db.MongoInfoDto;
 import com.github.shoothzj.db.pipeline.core.AbstractLoad;
 import com.github.shoothzj.db.pipeline.core.mapper.AbstractGenericMapper;
@@ -15,9 +14,7 @@ import com.mongodb.client.result.InsertOneResult;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.Document;
 
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author hezhangjian
@@ -49,15 +46,15 @@ public class MongoDataLoad extends AbstractLoad<MongoInfoDto> {
     }
 
     @Override
-    public boolean load(ObjectNode objectNode) {
-        final InsertOneResult insertOneResult = collection.insertOne(abstractGenericMapper.map2Generic(objectNode));
+    public boolean load(MapExchange mapExchange) {
+        final InsertOneResult insertOneResult = collection.insertOne(abstractGenericMapper.map2Generic(mapExchange));
         return true;
     }
 
     @Override
-    public boolean load(List<ObjectNode> objectNodeList) {
-        for (ObjectNode objectNode : objectNodeList) {
-            load(objectNode);
+    public boolean load(List<MapExchange> mapExchanges) {
+        for (MapExchange mapExchange : mapExchanges) {
+            load(mapExchange);
         }
         return true;
     }

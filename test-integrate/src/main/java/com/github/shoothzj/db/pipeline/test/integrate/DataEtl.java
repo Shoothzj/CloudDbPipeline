@@ -5,9 +5,8 @@ import com.github.shoothzj.db.pipeline.api.module.DbType;
 import com.github.shoothzj.db.pipeline.api.module.EtlTaskDto;
 import com.github.shoothzj.db.pipeline.api.module.ExtractDto;
 import com.github.shoothzj.db.pipeline.api.module.db.DbInfoDto;
-import com.github.shoothzj.db.pipeline.core.AbstractExtract;
+import com.github.shoothzj.db.pipeline.core.AbstractEtlWork;
 import com.github.shoothzj.db.pipeline.core.AbstractLoad;
-import com.github.shoothzj.db.pipeline.core.Etl;
 import com.github.shoothzj.javatool.util.YamlUtil;
 import lombok.extern.slf4j.Slf4j;
 
@@ -41,18 +40,18 @@ public class DataEtl {
         log.info("extract dto is [{}]", extractDto);
         final Object extractInfo;
         final Object loadInfo;
-        final AbstractExtract<Object, Object> abstractExtract;
+        final AbstractEtlWork<Object, Object, Object> abstractEtlWork;
         final AbstractLoad<Object> abstractLoad;
         {
             final Class<?> extractClass;
             final DbInfoDto extractDbInfo = extractDto.getDbInfo();
             if (extractDbInfo.getDbType().equals(DbType.Mysql)) {
-                extractClass = Class.forName("com.github.shoothzj.db.pipeline.plugin.mysql8.MysqlDataExtract");
+                extractClass = Class.forName("com.github.shoothzj.db.pipeline.plugin.mysql8.MysqlDataEtlWork");
                 extractInfo = extractDbInfo.getMysqlInfo();
             } else {
                 throw new IllegalArgumentException("not supported yet.");
             }
-            abstractExtract = (AbstractExtract<Object, Object>) extractClass.newInstance();
+            abstractEtlWork = (AbstractEtlWork<Object, Object, Object>) extractClass.newInstance();
         }
         {
             final Class<?> loadClass;
@@ -64,10 +63,10 @@ public class DataEtl {
                 throw new IllegalArgumentException("not supported yet.");
             }
             abstractLoad = (AbstractLoad<Object>) loadClass.newInstance();
+            abstractLoad.init(loadInfo);
         }
-        final Etl<Object, Object, Object> etl = new Etl<>();
-        etl.initEtl(extractInfo, loadInfo, abstractExtract, abstractLoad, etlTaskDto.getTransform());
-        final boolean workResult = etl.work();
+        abstractEtlWork.init(extractInfo, abstractLoad, etlTaskDto.getTransform());
+        final boolean workResult = abstractEtlWork.extract();
         log.info("rewind task end, work Result is [{}] cost time is [{}]", workResult, System.currentTimeMillis() - startTime);
     }
 

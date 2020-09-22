@@ -5,8 +5,8 @@ import com.github.shoothzj.db.pipeline.api.exchange.MapExchange;
 /**
  * @author hezhangjian
  */
-public abstract class AbstractGenericMapper<T> {
+public abstract class AbstractMapExchangeMapper<T> {
 
-    public abstract T map2Generic(MapExchange mapExchange);
+    public abstract MapExchange map2MapExchange(T t);
 
 }

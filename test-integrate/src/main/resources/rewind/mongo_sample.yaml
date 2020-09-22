@@ -18,8 +18,8 @@
     map:
       - fieldName: "name"
         transformType: "Function"
-        functionName:
-          name: "UUID"
+        functionInfo:
+          functionName: "UUID"
       - fieldName: "locationInfo.country"
         transformType: "Constant"
         constantInfo:

@@ -1,9 +1,6 @@
 package com.github.shoothzj.db.pipeline.api;
 
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.github.shoothzj.db.pipeline.api.module.SourceBrief;
-
-import java.util.List;
 
 /**
  * @author hezhangjian
@@ -19,7 +16,7 @@ public interface IExtract<PT> extends IDetect<PT> {
      *
      * @return
      */
-    List<ObjectNode> extract();
+    boolean extract();
 
     /**
      * 提取start~end的信息
@@ -28,6 +25,6 @@ public interface IExtract<PT> extends IDetect<PT> {
      * @param end
      * @return
      */
-    List<ObjectNode> extract(PT start, PT end);
+    boolean extract(PT start, PT end);
 
 }

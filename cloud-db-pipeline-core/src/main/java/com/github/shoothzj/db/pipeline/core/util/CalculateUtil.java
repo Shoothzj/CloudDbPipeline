@@ -58,8 +58,8 @@ public class CalculateUtil {
             if (functionInfo.getFunctionName().equals(FunctionName.Reverse)) {
                 return StringUtil.reverse(source);
             }
-            if (functionInfo.getFunctionName().equals(FunctionName.UnixTimestampToDateTime)) {
-                return LocalDateTime.ofInstant(Instant.ofEpochMilli(Long.parseLong(source)), ZoneOffset.UTC);
+            if (functionInfo.getFunctionName().equals(FunctionName.UnixTimestampToInstant)) {
+                return Instant.ofEpochMilli(Long.parseLong(source));
             }
             throw new NotSupportException(StageEnum.FUNCTION, functionInfo.getFunctionName().name());
         } else if (transformType.equals(TransformType.Constant)) {

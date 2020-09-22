@@ -1,6 +1,6 @@
 package com.github.shoothzj.db.pipeline.api;
 
-import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.github.shoothzj.db.pipeline.api.exchange.MapExchange;
 
 import java.util.List;
 
@@ -10,17 +10,17 @@ import java.util.List;
 public interface ILoad {
 
     /**
-     * 存入一个ObjectNode
-     * @param objectNode
+     * 存入一个 MapExchange
+     * @param mapExchange
      * @return
      */
-    boolean load(ObjectNode objectNode);
+    boolean load(MapExchange mapExchange);
 
     /**
-     * 存入ObjectNodeList
-     * @param objectNodeList
+     * 存入 MapExchangeList
+     * @param mapExchanges
      * @return
      */
-    boolean load(List<ObjectNode> objectNodeList);
+    boolean load(List<MapExchange> mapExchanges);
 
 }

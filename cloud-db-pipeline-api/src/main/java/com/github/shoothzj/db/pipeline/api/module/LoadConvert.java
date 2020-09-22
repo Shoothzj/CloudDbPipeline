@@ -11,6 +11,6 @@ public enum LoadConvert {
     /**
      * 转换为Java的LocalDateTime
      */
-    UnixTimestampToDateTime
+    UnixTimestampToInstant
 
 }

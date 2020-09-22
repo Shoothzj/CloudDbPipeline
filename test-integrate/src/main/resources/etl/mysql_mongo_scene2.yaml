@@ -24,11 +24,11 @@
       - fieldName: "createTime"
         transformType: "Function"
         functionInfo:
-          functionName: "UnixTimestampToDateTime"
+          functionName: "UnixTimestampToInstant"
   load:
-#    loadAction:
+#    loadActions:
 #      - fieldName: "createTime"
-#        loadConvert: "UnixTimestampToDateTime"
+#        loadConvert: "UnixTimestampToInstant"
     dbInfo:
       # 数据库类型
       dbType: "Mongo"

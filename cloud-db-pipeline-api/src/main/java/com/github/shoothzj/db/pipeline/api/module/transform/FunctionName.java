@@ -18,8 +18,8 @@ public enum FunctionName {
     Reverse,
 
     /**
-     * 转换为Java的LocalDateTime
+     * 转换为Java的Instant
      */
-    UnixTimestampToDateTime
+    UnixTimestampToInstant
 
 }

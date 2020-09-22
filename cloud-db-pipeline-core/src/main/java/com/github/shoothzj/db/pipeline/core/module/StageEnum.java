@@ -6,7 +6,7 @@ package com.github.shoothzj.db.pipeline.core.module;
 public enum StageEnum {
 
     /**
-     * Source to ObjectNode的流程
+     * Source to MapExchange的流程
      */
     SOURCE_MAPPER,
     /**
@@ -18,5 +18,10 @@ public enum StageEnum {
      * 函数运算
      */
     FUNCTION,
+
+    /**
+     * load到数据源过程
+     */
+    LOAD
 
 }

@@ -15,4 +15,8 @@ public class DbInfoDto {
 
     private MysqlInfoDto mysqlInfo;
 
+    private EsInfoDto esInfo;
+
+    public DbInfoDto() {
+    }
 }

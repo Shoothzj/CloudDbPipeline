@@ -1,7 +1,7 @@
 package com.github.shoothzj.db.pipeline.core;
 
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.github.shoothzj.db.pipeline.api.ILoad;
+import com.github.shoothzj.db.pipeline.api.exchange.MapExchange;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
@@ -16,9 +16,9 @@ public abstract class AbstractLoad<D> implements ILoad {
     public abstract void init(D d);
 
     @Override
-    public abstract boolean load(ObjectNode objectNode);
+    public abstract boolean load(MapExchange mapExchange);
 
     @Override
-    public abstract boolean load(List<ObjectNode> objectNodeList);
+    public abstract boolean load(List<MapExchange> mapExchanges);
 
 }

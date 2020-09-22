@@ -53,7 +53,7 @@ subprojects {
     }
 
     dependencies {
-        compile group: 'com.github.shoothzj', name: 'java-tool', version: '3.0.26.RELEASE'
+        compile group: 'com.github.shoothzj', name: 'java-tool', version: '3.0.29.RELEASE'
 
         compile group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.13.3'
 

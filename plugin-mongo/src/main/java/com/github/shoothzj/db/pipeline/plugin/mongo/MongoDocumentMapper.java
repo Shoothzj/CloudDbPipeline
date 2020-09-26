@@ -1,12 +1,12 @@
 package com.github.shoothzj.db.pipeline.plugin.mongo;
 
-import com.github.shoothzj.db.pipeline.api.exchange.ExchangeTraverseCallback;
-import com.github.shoothzj.db.pipeline.api.exchange.InstantExchange;
-import com.github.shoothzj.db.pipeline.core.exception.NotSupportException;
 import com.github.shoothzj.db.pipeline.api.exchange.AbstractExchange;
+import com.github.shoothzj.db.pipeline.api.exchange.InstantExchange;
 import com.github.shoothzj.db.pipeline.api.exchange.IntExchange;
+import com.github.shoothzj.db.pipeline.api.exchange.LongExchange;
 import com.github.shoothzj.db.pipeline.api.exchange.MapExchange;
 import com.github.shoothzj.db.pipeline.api.exchange.StringExchange;
+import com.github.shoothzj.db.pipeline.core.exception.NotSupportException;
 import com.github.shoothzj.db.pipeline.core.mapper.AbstractGenericMapper;
 import com.github.shoothzj.db.pipeline.core.module.StageEnum;
 import lombok.extern.slf4j.Slf4j;
@@ -33,6 +33,12 @@ public class MongoDocumentMapper extends AbstractGenericMapper<Document> {
         {
             if (value instanceof IntExchange) {
                 document.put(name, ((IntExchange) value).intValue());
+                return;
+            }
+        }
+        {
+            if (value instanceof LongExchange) {
+                document.put(name, ((LongExchange) value).longValue());
                 return;
             }
         }

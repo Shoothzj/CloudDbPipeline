@@ -21,6 +21,10 @@ public class MapExchange extends AbstractExchange {
         exchangeMap.put(name, new IntExchange(value));
     }
 
+    public void addExchange(String name, Long value) {
+        exchangeMap.put(name, new LongExchange(value));
+    }
+
     public void addExchange(String name, String value) {
         exchangeMap.put(name, new StringExchange(value));
     }

@@ -14,10 +14,15 @@ import java.time.Instant;
 public class MapExchangeUtil {
 
     public static void putVal(MapExchange mapExchange, String name, Object object) {
+        if (object == null) {
+            return;
+        }
         if (object instanceof String) {
             mapExchange.addExchange(name, (String) object);
         } else if (object instanceof Integer) {
             mapExchange.addExchange(name, (Integer) object);
+        } else if (object instanceof Long) {
+            mapExchange.addExchange(name, (Long) object);
         } else if (object instanceof Instant) {
             mapExchange.addExchange(name, (Instant) object);
         } else {

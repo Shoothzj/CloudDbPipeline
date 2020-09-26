@@ -60,7 +60,7 @@ public class MysqlDataEtlWork<PT, D> extends AbstractEtlWork<MysqlInfoDto, D, PT
     }
 
     @Override
-    public boolean extract() {
+    public boolean work() {
         long skip = 0;
         while (true) {
             try (Connection connection = dataSource.getConnection()) {
@@ -76,7 +76,8 @@ public class MysqlDataEtlWork<PT, D> extends AbstractEtlWork<MysqlInfoDto, D, PT
                 final ResultSet resultSet = prepareStatement.executeQuery();
                 int size = 0;
                 while (resultSet.next()) {
-                    resultList.add(exchangeMapper.map2MapExchange(resultSet));
+                    final MapExchange mapExchange = exchangeMapper.map2MapExchange(resultSet);
+                    resultList.add(transform(mapExchange, transformDto));
                     size++;
                 }
                 if (size == 0) {
@@ -93,7 +94,7 @@ public class MysqlDataEtlWork<PT, D> extends AbstractEtlWork<MysqlInfoDto, D, PT
     }
 
     @Override
-    public boolean extract(PT start, PT end) {
+    public boolean work(PT start, PT end) {
         return false;
     }
 

@@ -16,6 +16,8 @@
         primaryKey: "id"
   transform:
     map:
+      - fieldName: "id"
+        reName: "_id"
       - fieldName: "name"
         transformType: "Function"
         reName: "name"
@@ -25,10 +27,9 @@
         transformType: "Function"
         functionInfo:
           functionName: "UnixTimestampToInstant"
+      - fieldName: "createTime"
+        reName: "newTime"
   load:
-#    loadActions:
-#      - fieldName: "createTime"
-#        loadConvert: "UnixTimestampToInstant"
     dbInfo:
       # 数据库类型
       dbType: "Mongo"

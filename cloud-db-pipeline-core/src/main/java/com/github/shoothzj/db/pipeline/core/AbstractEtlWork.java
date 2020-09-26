@@ -12,7 +12,7 @@ import lombok.extern.slf4j.Slf4j;
  * PT: 主键数据类型
  */
 @Slf4j
-public abstract class AbstractEtlWork<S, D, PT> implements IExtract<PT> {
+public abstract class AbstractEtlWork<S, D, PT> extends AbstractTransform implements IExtract<PT> {
 
     public abstract void init(S s, AbstractLoad<D> load, TransformDto transformDto);
 
@@ -20,8 +20,8 @@ public abstract class AbstractEtlWork<S, D, PT> implements IExtract<PT> {
     public abstract SourceBrief<PT> detectBrief();
 
     @Override
-    public abstract boolean extract();
+    public abstract boolean work();
 
     @Override
-    public abstract boolean extract(PT start, PT end);
+    public abstract boolean work(PT start, PT end);
 }

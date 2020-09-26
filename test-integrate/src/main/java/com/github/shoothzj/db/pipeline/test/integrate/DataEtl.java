@@ -66,7 +66,7 @@ public class DataEtl {
             abstractLoad.init(loadInfo);
         }
         abstractEtlWork.init(extractInfo, abstractLoad, etlTaskDto.getTransform());
-        final boolean workResult = abstractEtlWork.extract();
+        final boolean workResult = abstractEtlWork.work();
         log.info("rewind task end, work Result is [{}] cost time is [{}]", workResult, System.currentTimeMillis() - startTime);
     }
 

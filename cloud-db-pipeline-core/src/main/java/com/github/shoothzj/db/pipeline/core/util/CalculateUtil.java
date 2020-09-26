@@ -10,9 +10,6 @@ import com.github.shoothzj.javatool.util.StringUtil;
 import lombok.extern.slf4j.Slf4j;
 
 import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
-import java.util.TimeZone;
 import java.util.UUID;
 
 /**
@@ -38,6 +35,14 @@ public class CalculateUtil {
     }
 
     public static Object processMap(int source, MapDto mapDto) {
+        final TransformType transformType = mapDto.getTransformType();
+        if (transformType == null) {
+            return source;
+        }
+        throw new NotSupportException(StageEnum.SOURCE_MAPPER, String.valueOf(source));
+    }
+
+    public static Object processMap(long source, MapDto mapDto) {
         final TransformType transformType = mapDto.getTransformType();
         if (transformType == null) {
             return source;

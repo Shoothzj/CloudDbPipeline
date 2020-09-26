@@ -16,7 +16,7 @@ public interface IExtract<PT> extends IDetect<PT> {
      *
      * @return
      */
-    boolean extract();
+    boolean work();
 
     /**
      * 提取start~end的信息
@@ -25,6 +25,6 @@ public interface IExtract<PT> extends IDetect<PT> {
      * @param end
      * @return
      */
-    boolean extract(PT start, PT end);
+    boolean work(PT start, PT end);
 
 }

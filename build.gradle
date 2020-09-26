@@ -5,6 +5,11 @@ plugins {
 group 'com.github.shoothzj'
 version '1.0-SNAPSHOT'
 
+//编译JAVA文件时采用UTF-8
+tasks.withType(JavaCompile) {
+    options.encoding = "UTF-8"
+}
+
 repositories {
     mavenCentral()
 }

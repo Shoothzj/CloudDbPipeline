@@ -1,8 +1,7 @@
 package com.github.shoothzj.db.pipeline.core.util;
 
-import com.fasterxml.jackson.databind.node.IntNode;
-import com.fasterxml.jackson.databind.node.TextNode;
 import com.github.shoothzj.db.pipeline.api.exchange.IntExchange;
+import com.github.shoothzj.db.pipeline.api.exchange.LongExchange;
 import com.github.shoothzj.db.pipeline.api.exchange.StringExchange;
 import com.github.shoothzj.db.pipeline.api.module.transform.MapDto;
 import lombok.extern.slf4j.Slf4j;
@@ -22,9 +21,16 @@ public class JsonCalculateUtil {
      * @return
      */
     public static Object processMap(Object source, MapDto mapDto) {
+        if (source == null) {
+            return null;
+        }
         if (source instanceof IntExchange) {
-            IntExchange intNode = (IntExchange) source;
-            return CalculateUtil.processMap(intNode.intValue(), mapDto);
+            IntExchange intExchange = (IntExchange) source;
+            return CalculateUtil.processMap(intExchange.intValue(), mapDto);
+        }
+        if (source instanceof LongExchange) {
+            LongExchange longExchange = (LongExchange) source;
+            return CalculateUtil.processMap(longExchange.longValue(), mapDto);
         }
         if (source instanceof StringExchange) {
             StringExchange textNode = (StringExchange) source;
